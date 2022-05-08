@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!-- Ver.0.11.2/2018-05-08 Dejun Hsu-->
+<xs:schema xmlns="http://www.chiss.org.cn/rhin/2015" elementFormDefault="qualified"
+           targetNamespace="http://www.chiss.org.cn/rhin/2015" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:include schemaLocation="RHIN-BaseObject.xsd"/>
+    <xs:complexType abstract="true" name="RegTermObject">
+        <xs:annotation>
+            <xs:documentation>术语通用注册对象</xs:documentation>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="RegObject">
+                <xs:sequence>
+                    <xs:element name="name" type="String" minOccurs="0">
+                        <xs:annotation>
+                            <xs:documentation>术语注册对象名称，如值集、值集映射等名称。</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="publisher" type="String">
+                        <xs:annotation>
+                            <xs:documentation>发布者</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="description" type="String">
+                        <xs:annotation>
+                            <xs:documentation>描述</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="effectiveTime" type="Period">
+                        <xs:annotation>
+                            <xs:documentation>有效时间</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="group" type="Reference">
+                        <xs:annotation>
+                            <xs:documentation>使用组织名称</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="ValueSet">
+        <xs:annotation>
+            <xs:documentation>值集</xs:documentation>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="RegTermObject">
+                <xs:sequence>
+                    <xs:element minOccurs="0" name="define" type="ValueSetDefine">
+                        <xs:annotation>
+                            <xs:documentation>自定义值集编码，不从编码系统引入，形成隐式编码系统
+                            </xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="compose" type="ValueSetCompose">
+                        <xs:annotation>
+                            <xs:documentation>值集的组合定义，声明值集由哪些编码系统的哪些编码组成
+                            </xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="expansion" type="ValueSetExpansion">
+                        <xs:annotation>
+                            <xs:documentation>展开模式。相当于把所有编码全部列出</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="ConceptMap">
+        <xs:annotation>
+            <xs:documentation>概念映射</xs:documentation>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="RegTermObject">
+                <xs:sequence>
+                    <xs:element name="source" type="Reference">
+                        <xs:annotation>
+                            <xs:documentation>编码映射的源值集</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="target" type="Reference">
+                        <xs:annotation>
+                            <xs:documentation>编码映射的目标值集</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="element"
+                                type="ConceptMapElement">
+                        <xs:annotation>
+                            <xs:documentation>映射的编码</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="ConceptMapTarget">
+        <xs:annotation>
+            <xs:documentation>概念映射目标</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="code" type="String" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>目标编码值</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="codeSystem" type="OID" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>目标编码系统</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="equivalence" type="EquivalenceType">
+                <xs:annotation>
+                    <xs:documentation>编码映射关联</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="ConceptMapElement">
+        <xs:annotation>
+            <xs:documentation>概念映射元素</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="code" type="Code">
+                <xs:annotation>
+                    <xs:documentation>源编码值</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="codeSystem" type="OID">
+                <xs:annotation>
+                    <xs:documentation>源编码系统</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="target" type="ConceptMapTarget">
+                <xs:annotation>
+                    <xs:documentation>目标编码</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="Contains">
+        <xs:sequence>
+            <xs:element name="code" type="Coding" maxOccurs="unbounded">
+                <xs:annotation>
+                    <xs:documentation>编码值</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element minOccurs="0" name="contains" type="Contains"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:simpleType name="equivalencePrimitive">
+        <xs:annotation>
+            <xs:documentation>Equivalent - 相等，等价的 Equal - 相同的 Wider - 目标编码的含义比源编码宽泛
+                Subsumes - 源编码
+                is-a目标编码 Narrower - 目标编码的含义比源编码狭窄 Spechializes - 目标编码 is-a 源编码 Inexact -
+                不精确 UnMatched - 不匹配
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="Equivalent"/>
+            <xs:enumeration value="Equal"/>
+            <xs:enumeration value="Wider"/>
+            <xs:enumeration value="Subsumes"/>
+            <xs:enumeration value="Narrower"/>
+            <xs:enumeration value="Spechializes"/>
+            <xs:enumeration value="Inexact"/>
+            <xs:enumeration value="UnMatched"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:complexType name="EquivalenceType">
+        <xs:annotation>
+            <xs:documentation>等值类型</xs:documentation>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="Any">
+                <xs:attribute name="value" type="equivalencePrimitive" use="optional"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="ValueSetDefine">
+        <xs:annotation>
+            <xs:documentation>值集定义</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="code" type="Code" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="ValueSetExpansion">
+        <xs:annotation>
+            <xs:documentation>值集展开模式</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="version" type="String">
+                <xs:annotation>
+                    <xs:documentation>展开模式对应的版本信息。如果与值集的版本信息不符合，则需要重新获取展
+                        开模式编码列表
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="effectiveTime" type="DateTime">
+                <xs:annotation>
+                    <xs:documentation>展开模式生成的时间</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="contains" type="Contains">
+                <xs:annotation>
+                    <xs:documentation>编码列表</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="ValueSetCompose">
+        <xs:annotation>
+            <xs:documentation>值集购成</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="import" type="OID" minOccurs="0" maxOccurs="unbounded">
+                <xs:annotation>
+                    <xs:documentation>整个编码系统的导入</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="include" minOccurs="0" maxOccurs="unbounded" type="ValueSetInclude">
+                <xs:annotation>
+                    <xs:documentation>仅包括指定编码系统中的一部分编码值</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="exclude" minOccurs="0" maxOccurs="unbounded" type="ValueSetInclude">
+                <xs:annotation>
+                    <xs:documentation>包含一个编码系统，但是指定的编码值排除在外</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="ValueSetInclude">
+        <xs:annotation>
+            <xs:documentation>值集包含</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="system" type="OID">
+                <xs:annotation>
+                    <xs:documentation>指定的编码系统</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="code" type="Code" maxOccurs="unbounded">
+                <xs:annotation>
+                    <xs:documentation>仅有这些编码加入值集</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+</xs:schema>

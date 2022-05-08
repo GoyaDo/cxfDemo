@@ -1,0 +1,514 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!-- Ver.0.12.3/2018-07-12 Dejun Hsu-->
+<xs:schema xmlns="http://www.chiss.org.cn/rhin/2015" elementFormDefault="qualified"
+           targetNamespace="http://www.chiss.org.cn/rhin/2015" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:include schemaLocation="RHIN-Base.xsd"/>
+    <xs:complexType name="RegObject" abstract="true">
+        <xs:sequence>
+            <xs:element minOccurs="0" name="id" type="MainID">
+                <xs:annotation>
+                    <xs:documentation>注册对象的唯一标识号, 由注册对象管理方分配</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element minOccurs="0" name="statusCode" type="ObjectStatus">
+                <xs:annotation>
+                    <xs:documentation>注册对象的状态(新建\可用\废弃)</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element minOccurs="0" name="classCode" type="CodeableConcept">
+                <xs:annotation>
+                    <xs:documentation>注册对象的分类(最粗粒度的分类)
+                        如果需要细粒度的分类,在具体对象添加
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element maxOccurs="unbounded" minOccurs="0" name="extension" type="Extension">
+                <xs:annotation>
+                    <xs:documentation>扩展机制.
+                        当注册对象未含有期望的元素,可以通过该方法进行扩展.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="BloodType">
+        <xs:sequence>
+            <xs:element name="RH" type="Boolean"/>
+            <xs:element name="ABO" type="CodeableConcept"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="HealthHistoryType">
+        <xs:annotation>
+            <xs:documentation/>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="name" type="CodeableConcept"/>
+            <xs:element minOccurs="0" name="confirmedTime" type="DateTime"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="FamilyHistoryType">
+        <xs:sequence>
+            <xs:element maxOccurs="unbounded" minOccurs="1" name="relatives">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="relativeType" type="Coding"/>
+                        <xs:element name="diseaseHistory" type="HealthHistoryType"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="PhysicalCondition">
+        <xs:sequence>
+            <xs:element minOccurs="0" name="booldType" type="BloodType"/>
+            <xs:element maxOccurs="unbounded" minOccurs="0" name="allergicHistory"
+                        type="HealthHistoryType"/>
+            <xs:element maxOccurs="unbounded" minOccurs="0" name="diseaseHistory"
+                        type="HealthHistoryType"/>
+            <xs:element maxOccurs="unbounded" minOccurs="0" name="operationHistory"
+                        type="HealthHistoryType"/>
+            <xs:element maxOccurs="unbounded" minOccurs="0" name="rtaumaHistory"
+                        type="HealthHistoryType"/>
+            <xs:element maxOccurs="unbounded" minOccurs="0" name="transfusionHistory"
+                        type="HealthHistoryType"/>
+            <xs:element maxOccurs="unbounded" minOccurs="0" name="geneticHistory"
+                        type="HealthHistoryType"/>
+            <xs:element maxOccurs="unbounded" minOccurs="0" name="familyHistory"
+                        type="FamilyHistoryType"></xs:element>
+            <xs:element maxOccurs="unbounded" minOccurs="0" name="disabilitySituation"
+                        type="CodeableConcept"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="Contact">
+        <xs:annotation>
+            <xs:documentation>联系人类型</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="identifier" type="Identifier">
+                <xs:annotation>
+                    <xs:documentation>标识符</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element minOccurs="0" name="code" type="CodeableConcept">
+                <xs:annotation>
+                    <xs:documentation>编码</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element maxOccurs="unbounded" minOccurs="0" name="address" type="Address">
+                <xs:annotation>
+                    <xs:documentation>地址</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element maxOccurs="unbounded" minOccurs="0" name="telecom" type="Telecom">
+                <xs:annotation>
+                    <xs:documentation>联系电话</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="assignedPerson" type="Person"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="Guardian">
+        <xs:annotation>
+            <xs:documentation/>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="identifier" type="Identifier" maxOccurs="unbounded"/>
+            <xs:element minOccurs="0" name="code" type="CodeableConcept">
+                <xs:annotation>
+                    <xs:documentation>编码</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element minOccurs="0" name="address" type="Address"/>
+            <xs:element name="telecom" type="Telecom" minOccurs="0"/>
+            <xs:element minOccurs="0" name="effectiveTime" type="Period"/>
+            <xs:choice>
+                <xs:element maxOccurs="unbounded" minOccurs="0" name="guardianPerson" type="Person"></xs:element>
+                <xs:element maxOccurs="unbounded" minOccurs="0" name="guardianOrganization"
+                            type="Organization"></xs:element>
+            </xs:choice>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="Person">
+        <xs:annotation>
+            <xs:documentation>居民实体类</xs:documentation>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="RegObject">
+                <xs:sequence>
+                    <xs:element maxOccurs="unbounded" name="identifier" type="Identifier"
+                                minOccurs="0"/>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="name" type="HumanName"/>
+                    <xs:element name="birthTime" type="Date" minOccurs="0">
+                        <xs:annotation>
+                            <xs:documentation>出生日期</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="gender" type="Code">
+                        <xs:annotation>
+                            <xs:documentation>性别</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="address" type="Address">
+                        <xs:annotation>
+                            <xs:documentation>地址</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="telecom" type="Telecom">
+                        <xs:annotation>
+                            <xs:documentation>联系方式</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="languageCommunication" type="Language" maxOccurs="unbounded"/>
+                    <xs:element minOccurs="0" name="birthPlace" type="Address">
+                        <xs:annotation>
+                            <xs:documentation>出生地</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="maritalStatusCode" type="Code">
+                        <xs:annotation>
+                            <xs:documentation>婚姻状态</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:choice minOccurs="0">
+                        <xs:element name="deceasedInd" type="Boolean">
+                            <xs:annotation>
+                                <xs:documentation>死亡标记</xs:documentation>
+                            </xs:annotation>
+                        </xs:element>
+                        <xs:element name="deceasedTime" type="DateTime">
+                            <xs:annotation>
+                                <xs:documentation>死亡时间</xs:documentation>
+                            </xs:annotation>
+                        </xs:element>
+                    </xs:choice>
+                    <xs:choice minOccurs="0">
+                        <xs:element name="multipleBirthInd" type="Boolean">
+                            <xs:annotation>
+                                <xs:documentation>多胎标记</xs:documentation>
+                            </xs:annotation>
+                        </xs:element>
+                        <xs:element name="multipleBirthOrderNumber" type="Integer">
+                            <xs:annotation>
+                                <xs:documentation>多胎次序</xs:documentation>
+                            </xs:annotation>
+                        </xs:element>
+                    </xs:choice>
+                    <xs:element minOccurs="0" name="photo" type="Base64Binary">
+                        <xs:annotation>
+                            <xs:documentation>头像图片</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="Patient">
+        <xs:complexContent>
+            <xs:extension base="RegObject">
+                <xs:sequence>
+                    <xs:element minOccurs="0" name="identifier" type="Identifier"
+                                maxOccurs="unbounded">
+                        <xs:annotation>
+                            <xs:documentation>患者角色编码、如就诊号、 健康卡号、住院号、门诊号等。</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="address" type="Address">
+                        <xs:annotation>
+                            <xs:documentation>地址</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="telecom" type="Telecom">
+                        <xs:annotation>
+                            <xs:documentation>联系电话
+                            </xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="effectiveTime" type="DateTime"/>
+                    <xs:element name="assignedPerson" type="Person" minOccurs="0"/>
+                    <xs:element minOccurs="0" name="assignedOrganization" type="Organization">
+                        <xs:annotation>
+                            <xs:documentation>居委会</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="contact" type="Contact" maxOccurs="unbounded"/>
+                    <xs:element minOccurs="0" name="guardian" type="Guardian" maxOccurs="unbounded"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="Organization">
+        <xs:annotation>
+            <xs:documentation>科室、机构</xs:documentation>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="RegObject">
+                <xs:sequence>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="identifier" type="Identifier">
+                        <xs:annotation>
+                            <xs:documentation>机构编码</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="name" type="String">
+                        <xs:annotation>
+                            <xs:documentation>机构名称</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="healthcareFacilityTypeCode"
+                                type="CodeableConcept">
+                        <xs:annotation>
+                            <xs:documentation>机构的类型</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="practiceSettingCode" type="CodeableConcept">
+                        <xs:annotation>
+                            <xs:documentation>机构的专业分类</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="address" type="Address">
+                        <xs:annotation>
+                            <xs:documentation>地址</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="telecom" type="Telecom">
+                        <xs:annotation>
+                            <xs:documentation>联系方式</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="effectiveTime" type="DateTime">
+                        <xs:annotation>
+                            <xs:documentation>机构创建时间</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="partOf" type="Organization" minOccurs="0">
+                        <xs:annotation>
+                            <xs:documentation>指向上一级机构</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="MainID">
+        <xs:complexContent>
+            <xs:extension base="ID">
+                <xs:sequence>
+                    <xs:element name="system" type="uriPrimitive"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="Practitioner">
+        <xs:annotation>
+            <xs:documentation>医护人员类型</xs:documentation>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="RegObject">
+                <xs:sequence>
+                    <xs:element minOccurs="0" name="identifier" type="Identifier" maxOccurs="unbounded">
+                        <xs:annotation>
+                            <xs:documentation>医疗卫生人员的编码，如工号、统一编码等。</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="duty" type="Coding" maxOccurs="unbounded">
+                        <xs:annotation>
+                            <xs:documentation>职务</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="professionalTitle" type="Coding"
+                                maxOccurs="unbounded">
+                        <xs:annotation>
+                            <xs:documentation>职称</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="address" type="AddressType" minOccurs="0"
+                                maxOccurs="unbounded">
+                        <xs:annotation>
+                            <xs:documentation>联系地址</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="telecom" minOccurs="0" maxOccurs="unbounded" type="Telecom">
+                        <xs:annotation>
+                            <xs:documentation>联系电话</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="assignedPerson" type="Person"/>
+                    <xs:element name="practiceOrganization" type="Organization" minOccurs="0">
+                        <xs:annotation>
+                            <xs:documentation>科室及执业机构</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="PersonBrief">
+        <xs:annotation>
+            <xs:documentation>居民信息查询参数</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element maxOccurs="unbounded" minOccurs="0" name="identifier" type="Identifier">
+                <xs:annotation>
+                    <xs:documentation>标识符</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element minOccurs="0" name="name" type="HumanName">
+                <xs:annotation>
+                    <xs:documentation>名称</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element minOccurs="0" name="birthTime" type="Date">
+                <xs:annotation>
+                    <xs:documentation>出生日期</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element minOccurs="0" name="gender" type="Code">
+                <xs:annotation>
+                    <xs:documentation>性别</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element minOccurs="0" name="addr" type="Address">
+                <xs:annotation>
+                    <xs:documentation>地址</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element minOccurs="0" name="telecom" type="Telecom">
+                <xs:annotation>
+                    <xs:documentation>联系方式</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="OrganizationBrief">
+        <xs:annotation>
+            <xs:documentation>机构查询参数</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element maxOccurs="unbounded" minOccurs="0" name="identifier" type="Identifier">
+                <xs:annotation>
+                    <xs:documentation>标识符</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element minOccurs="0" name="classCode" type="Coding" maxOccurs="unbounded">
+                <xs:annotation>
+                    <xs:documentation>机构(科室)类别</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element minOccurs="0" name="name" type="String">
+                <xs:annotation>
+                    <xs:documentation>机构名称</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element minOccurs="0" name="address" type="Address">
+                <xs:annotation>
+                    <xs:documentation>地址</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element minOccurs="0" name="telecom" type="Telecom">
+                <xs:annotation>
+                    <xs:documentation>联系方式</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element minOccurs="0" name="partOf" type="OrganizationBrief"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="PractitionerBrief">
+        <xs:annotation>
+            <xs:documentation>医护人员查询参数</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element maxOccurs="unbounded" minOccurs="0" name="identifier" type="Identifier">
+                <xs:annotation>
+                    <xs:documentation>标识符</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element minOccurs="0" name="name" type="HumanName">
+                <xs:annotation>
+                    <xs:documentation>医务人员姓名</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element minOccurs="0" name="organization" type="OrganizationBrief"/>
+            <xs:element minOccurs="0" name="duty" type="Coding" maxOccurs="unbounded">
+                <xs:annotation>
+                    <xs:documentation>职务</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element minOccurs="0" name="professionalTitle" type="Coding" maxOccurs="unbounded">
+                <xs:annotation>
+                    <xs:documentation>职称</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="Extension">
+        <xs:annotation>
+            <xs:documentation>扩展类型,支持扩展机制。</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="name" type="URI">
+                <xs:annotation>
+                    <xs:documentation>关键字</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element maxOccurs="unbounded" name="value" type="Any">
+                <xs:annotation>
+                    <xs:documentation>取值,可以为Any的任何继承类</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:simpleType name="objectStatusPrimitive">
+        <xs:annotation>
+            <xs:documentation>
+                New Active Nullified
+                - 新建 - 可用
+                - 废弃
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="stringPrimitive">
+            <xs:enumeration value="New"/>
+            <xs:enumeration value="Active"/>
+            <xs:enumeration value="Nullified"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:complexType name="ObjectStatus">
+        <xs:complexContent>
+            <xs:extension base="Any">
+                <xs:attribute name="value" type="objectStatusPrimitive"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="AdhocQuery">
+        <xs:annotation>
+            <xs:documentation>预存查询类型</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="id" type="URN">
+                <xs:annotation>
+                    <xs:documentation>预存储查询的唯一编号</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element maxOccurs="unbounded" name="slot" type="Slot">
+                <xs:annotation>
+                    <xs:documentation>预存储查询参数列表,各参数之间为AND关系</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="adhocQuery" type="AdhocQuery">
+        <xs:annotation>
+            <xs:documentation>通用查询元素 本消息元素在订阅服务/Subscribe/Filter节点或查询中引用。</xs:documentation>
+        </xs:annotation>
+    </xs:element>
+    <xs:complexType name="ObjectRef">
+        <xs:annotation>
+            <xs:documentation>对象索引</xs:documentation>
+        </xs:annotation>
+        <xs:sequence minOccurs="0">
+            <xs:element name="id" type="MainID" maxOccurs="1" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>主域标识(注册码、主索引号)</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+</xs:schema>

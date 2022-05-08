@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Ver.0.12.5/2018-09-12 Dejun Hsu-->
+<xs:schema xmlns="http://www.chiss.org.cn/rhin/2015" xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           targetNamespace="http://www.chiss.org.cn/rhin/2015" elementFormDefault="qualified">
+    <xs:include schemaLocation="Base/RHIN-BaseObject.xsd"/>
+    <xs:element name="OrganizationFeed" type="OrganizationFeed">
+        <xs:annotation>
+            <xs:documentation>IST-MIR1:医疗卫生机构信息提交消息
+            </xs:documentation>
+        </xs:annotation>
+    </xs:element>
+    <xs:element name="OrganizationFeedResponse" type="OrganizationFeedResponse">
+        <xs:annotation>
+            <xs:documentation>IST-MIR1:响应信息</xs:documentation>
+        </xs:annotation>
+    </xs:element>
+    <xs:element name="OrganizationQuery" type="OrganizationQueryRequest">
+        <xs:annotation>
+            <xs:documentation>IST-MIR2:医疗机构信息查询条件</xs:documentation>
+        </xs:annotation>
+    </xs:element>
+    <xs:element name="OrganizationQueryResponse" type="OrganizationQueryResponseMessage">
+        <xs:annotation>
+            <xs:documentation>IST-MIR2:响应信息</xs:documentation>
+        </xs:annotation>
+    </xs:element>
+    <xs:element name="organizationRevise" type="OrganizationReviseNotify">
+        <xs:annotation>
+            <xs:documentation>IST-MIR4:医疗卫生机构信息变更通知。本消息元素在基础通知服务
+                /Notify/NotificationMessage/Message节点中引用。
+            </xs:documentation>
+        </xs:annotation>
+    </xs:element>
+    <xs:complexType name="OrganizationFeed">
+        <xs:annotation>
+            <xs:documentation>IST-MIR1:医疗卫生机构信息提交消息数据类型</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="organization" type="Organization"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="OrganizationFeedResponse">
+        <xs:annotation>
+            <xs:documentation>IST-MIR1:响应信息数据类型</xs:documentation>
+        </xs:annotation>
+        <xs:choice>
+            <xs:element name="masterIdentifier" type="Identifier"/>
+        </xs:choice>
+    </xs:complexType>
+    <xs:complexType name="OrganizationQueryRequest">
+        <xs:annotation>
+            <xs:documentation>IST-MIR2:医疗机构信息查询条件数据类型
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="from" type="Integer" minOccurs="0"/>
+            <xs:element name="maxCount" type="Integer" minOccurs="0"/>
+            <xs:element name="adhocQuery" type="AdhocQuery"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="OrganizationQueryResponseMessage">
+        <xs:annotation>
+            <xs:documentation>IST-MIR2:响应信息数据类型</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="totalCount" type="Integer"/>
+            <xs:element name="from" type="Integer" minOccurs="0"/>
+            <xs:element name="count" type="Integer" minOccurs="0"/>
+            <xs:element name="organization" type="Organization" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="OrganizationReviseNotify">
+        <xs:annotation>
+            <xs:documentation>IST-MIR3:医疗卫生机构信息变更通知数据类型</xs:documentation>
+        </xs:annotation>
+        <xs:choice>
+            <xs:element name="organization" type="Organization" maxOccurs="unbounded"/>
+        </xs:choice>
+    </xs:complexType>
+</xs:schema>

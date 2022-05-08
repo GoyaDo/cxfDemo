@@ -1,0 +1,456 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!-- Ver.0.12.0/2018-06-12 Dejun Hsu-->
+<xs:schema xmlns="http://www.chiss.org.cn/rhin/2015" elementFormDefault="qualified"
+           targetNamespace="http://www.chiss.org.cn/rhin/2015" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:include schemaLocation="RHIN-BaseObject.xsd"/>
+    <xs:complexType name="SubmissionSet">
+        <xs:annotation>
+            <xs:documentation>提交集元数据消息体</xs:documentation>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="RegObject">
+                <xs:sequence>
+                    <xs:element name="uniqueId" type="OID">
+                        <xs:annotation>
+                            <xs:documentation>提交集的全球唯一标识符,该标识符由文档源提供
+                            </xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="submissionTime" type="DateTime">
+                        <xs:annotation>
+                            <xs:documentation>文档集提交时间</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="title" type="String">
+                        <xs:annotation>
+                            <xs:documentation>文档集标题</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="patientId" type="Identifier">
+                        <xs:annotation>
+                            <xs:documentation>患者本区域的唯一标识符</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element maxOccurs="unbounded" name="author" type="Author" minOccurs="0">
+                        <xs:annotation>
+                            <xs:documentation>作者信息,可以是人也可以是机器</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="intendedRecipient"
+                                type="Reference">
+                        <xs:annotation>
+                            <xs:documentation>预期接收者,对该提交集的接收者进行的约束限制
+                            </xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="contentTypeCode" type="CodeableConcept"/>
+                    <xs:element minOccurs="0" name="sourceId" type="OID">
+                        <xs:annotation>
+                            <xs:documentation>文档集提交源</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="homeCommunityId" type="URI">
+                        <xs:annotation>
+                            <xs:documentation>区域的唯一标识符</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="comments" type="String">
+                        <xs:annotation>
+                            <xs:documentation>注释</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:choice maxOccurs="unbounded" minOccurs="0">
+                        <xs:element minOccurs="0" name="folder" type="Folder">
+                            <xs:annotation>
+                                <xs:documentation>提交集中文件夹:
+                                    可以指定哪些文档需要放置在文档库中,或者
+                                    单纯的在文档库中创建空文件夹,以备以后使用
+                                </xs:documentation>
+                            </xs:annotation>
+                        </xs:element>
+                        <xs:element minOccurs="0" name="documentEntry" type="DocumentEntry">
+                            <xs:annotation>
+                                <xs:documentation>提交集中的文档</xs:documentation>
+                            </xs:annotation>
+                        </xs:element>
+                        <xs:element minOccurs="0" name="association" type="Association">
+                            <xs:annotation>
+                                <xs:documentation>记录提交集中文档与文档\文档与文件夹之间的关联关系:
+                                    包括本提交集中的文档（Original）
+                                    或者文档库已存在文档（Reference）
+                                </xs:documentation>
+                            </xs:annotation>
+                        </xs:element>
+                    </xs:choice>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="Folder">
+        <xs:annotation>
+            <xs:documentation>文件夹元数据消息体</xs:documentation>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="RegObject">
+                <xs:sequence>
+                    <xs:element name="uniqueId" type="OID">
+                        <xs:annotation>
+                            <xs:documentation>文件夹的唯一标识符,该标识符由文档源提供</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="title" type="String">
+                        <xs:annotation>
+                            <xs:documentation>文件夹的标题</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="lastUpdateTime" type="DateTime">
+                        <xs:annotation>
+                            <xs:documentation>文件夹的最后更新时间</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="patientId" type="Identifier">
+                        <xs:annotation>
+                            <xs:documentation>患者本区域唯一标识符
+                            </xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="typeCode"
+                                type="CodeableConcept"/>
+                    <xs:element minOccurs="0" name="homeCommunityId" type="OID">
+                        <xs:annotation>
+                            <xs:documentation>区域的唯一标识符</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="comments" type="String">
+                        <xs:annotation>
+                            <xs:documentation>注释</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="DocumentEntry">
+        <xs:annotation>
+            <xs:documentation>文档元数据.消息体</xs:documentation>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="RegObject">
+                <xs:sequence>
+                    <xs:element minOccurs="0" name="languageCode" type="Code">
+                        <xs:annotation>
+                            <xs:documentation>语言</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="title" type="String">
+                        <xs:annotation>
+                            <xs:documentation>文档标题</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="confidentialityCode" type="Coding">
+                        <xs:annotation>
+                            <xs:documentation>隐私性</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="creationTime" type="DateTime">
+                        <xs:annotation>
+                            <xs:documentation>文档的创建时间</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="mimeType" type="String">
+                        <xs:annotation>
+                            <xs:documentation>文件的MIME格式</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="formatCode" type="Code">
+                        <xs:annotation>
+                            <xs:documentation>文件格式</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="objectType" type="ObjectType">
+                        <xs:annotation>
+                            <xs:documentation>文档元数据的对象类型:
+                                静态的-元数据指向的文档是存在的
+                                按需的-元数据指向的文档当前在文档库不存在,但是能够按需动态生成出来
+                            </xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="size" type="Integer">
+                        <xs:annotation>
+                            <xs:documentation>文件的大小</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="hash" type="String">
+                        <xs:annotation>
+                            <xs:documentation>文件的哈希值</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="serviceStartTime" type="DateTime">
+                        <xs:annotation>
+                            <xs:documentation>文档指代的就诊活动的开始时间</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="serviceStopTime" type="DateTime">
+                        <xs:annotation>
+                            <xs:documentation>文档指代的就诊活动的结束时间</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="patientId" type="Identifier">
+                        <xs:annotation>
+                            <xs:documentation>患者在本区域的唯一标识符</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="sourcePatientInfo" type="Patient">
+                        <xs:annotation>
+                            <xs:documentation>患者在文档传输源系统中的信息</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="author" type="Author">
+                        <xs:annotation>
+                            <xs:documentation>作者</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="legalAuthenticator" type="Practitioner">
+                        <xs:annotation>
+                            <xs:documentation>审核者</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="healthcareFacilityTypeCode"
+                                type="CodeableConcept">
+                        <xs:annotation>
+                            <xs:documentation>文档指代就诊活动所在机构的类型</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="practiceSettingCode" type="CodeableConcept">
+                        <xs:annotation>
+                            <xs:documentation>文档指代就诊活动所在机构的专业分类</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="typeCode" type="CodeableConcept">
+                        <xs:annotation>
+                            <xs:documentation>就诊活动的分类（细粒度）</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="eventCode"
+                                type="CodeableConcept">
+                        <xs:annotation>
+                            <xs:documentation>患者就诊活动中事件编码列表</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="uniqueId" type="OID">
+                        <xs:annotation>
+                            <xs:documentation>文档的唯一标识符</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="repositoryUniqueId" type="OID">
+                        <xs:annotation>
+                            <xs:documentation>文档存储库的唯一标识符</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="homeCommunityId" type="OID">
+                        <xs:annotation>
+                            <xs:documentation>区域的唯一标识符</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="comments" type="String">
+                        <xs:annotation>
+                            <xs:documentation>注释</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="Association">
+        <xs:annotation>
+            <xs:documentation>关联关系</xs:documentation>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="RegObject">
+                <xs:sequence>
+                    <xs:element name="typeCode" type="AssociationType">
+                        <xs:annotation>
+                            <xs:documentation>关联类型</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="sourceObject" type="AssociationObject">
+                        <xs:annotation>
+                            <xs:documentation>关联源</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="targetObject" type="AssociationObject">
+                        <xs:annotation>
+                            <xs:documentation>关联目标</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="DocumentReference">
+        <xs:sequence>
+            <xs:element name="documentUniqueId" type="OID">
+                <xs:annotation>
+                    <xs:documentation>文档唯一标识符</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="repositoryUniqueId" type="OID">
+                <xs:annotation>
+                    <xs:documentation>文档存储库唯一标识符</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element minOccurs="0" name="homeCommunityId" type="OID">
+                <xs:annotation>
+                    <xs:documentation>区域唯一标识符</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="StoredDocument">
+        <xs:annotation>
+            <xs:documentation>已存的文档,id为OID</xs:documentation>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="DocumentReference">
+                <xs:sequence>
+                    <xs:element name="mimeType" type="String">
+                        <xs:annotation>
+                            <xs:documentation>内容的类型</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="content" type="base64BinaryPrimitive">
+                        <xs:annotation>
+                            <xs:documentation>文档内容</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="Document">
+        <xs:annotation>
+            <xs:documentation>用于提交文档时,id为URI,可以为暂代符或者UUID
+                与DocumentEntry中的id一致
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="id" type="URI">
+                <xs:annotation>
+                    <xs:documentation>内容的类型</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="content" type="base64BinaryPrimitive">
+                <xs:annotation>
+                    <xs:documentation>文档内容</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="Author">
+        <xs:sequence>
+            <xs:element maxOccurs="unbounded" minOccurs="0" name="authorRole" type="CodeableConcept">
+                <xs:annotation>
+                    <xs:documentation>作者角色</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element maxOccurs="unbounded" minOccurs="0" name="authorSpecialty"
+                        type="CodeableConcept">
+                <xs:annotation>
+                    <xs:documentation>作者专业</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="authorPerson" type="Reference">
+                <xs:annotation>
+                    <xs:documentation>作者</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element maxOccurs="unbounded" minOccurs="0" name="authorTelecommunication"
+                        type="Telecom">
+                <xs:annotation>
+                    <xs:documentation>作者联系方式</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element maxOccurs="unbounded" minOccurs="0" name="authorInstitution"
+                        type="Reference">
+                <xs:annotation>
+                    <xs:documentation>作者所在机构</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="AssociationObject">
+        <xs:annotation>
+            <xs:documentation>标识关联的对象</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="id" type="URI"/>
+            <xs:element name="status" type="AssociationStatus"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:simpleType name="associationStatusPrimitive">
+        <xs:annotation>
+            <xs:documentation>
+                Original - 原始
+                Reference - 引用
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="stringPrimitive">
+            <xs:enumeration value="original"/>
+            <xs:enumeration value="reference"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:complexType name="AssociationStatus">
+        <xs:complexContent>
+            <xs:extension base="Any">
+                <xs:attribute name="value" type="associationStatusPrimitive"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:simpleType name="associationTypePrimitive">
+        <xs:annotation>
+            <xs:documentation>
+                HasMember - 拥有
+                RPLC - 替换
+                APND - 新增
+                XFRM - 转换
+                XFRM_RPLC - 转换并替换
+                Signs - 签名
+                IsSnapshotOf - 快照
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="urnPrimitive">
+            <xs:enumeration value="urn:rhin:AssociationType:HasMember"/>
+            <xs:enumeration value="urn:rhin:AssociationType:RPLC"/>
+            <xs:enumeration value="urn:rhin:AssociationType:XFRM"/>
+            <xs:enumeration value="urn:rhin:AssociationType:APND"/>
+            <xs:enumeration value="urn:rhin:AssociationType:XFRM_RPLC"/>
+            <xs:enumeration value="urn:rhin:AssociationType:signs"/>
+            <xs:enumeration value="urn:rhin:AssociationType:IsSnapshotOf"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:complexType name="AssociationType">
+        <xs:complexContent>
+            <xs:extension base="Any">
+                <xs:attribute name="value" type="associationTypePrimitive"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:simpleType name="objectType">
+        <xs:annotation>
+            <xs:documentation>
+                Stable - 静态OnDemand - 按需
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="urnPrimitive">
+            <xs:enumeration value="urn:rhin:ObjectType:Stable"/>
+            <xs:enumeration value="urn:rhin:ObjectType:OnDemand"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:complexType name="ObjectType">
+        <xs:complexContent>
+            <xs:extension base="Any">
+                <xs:attribute name="value" type="objectType"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+</xs:schema>
